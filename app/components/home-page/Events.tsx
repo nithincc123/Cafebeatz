@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+
+import {
+  motion,
+  useScroll,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+
 import { useLanguage } from "@/app/context/LanguageContext";
 import Button from "../Button";
 
@@ -9,6 +16,15 @@ export default function Events() {
   const { activeLang } = useLanguage();
 
   const [eventData, setEventData] = useState<any>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [comments, setComments] = useState("");
 
   // Fixed: Use page scroll instead of target ref
   const { scrollY } = useScroll();
@@ -32,6 +48,72 @@ export default function Events() {
     );
   }
 
+  const handleEnquirySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      name,
+      email,
+      phone,
+      comments,
+    };
+
+    try {
+      setIsSubmitting(true);
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`;
+
+      console.log("URL:", url);
+      console.log("Payload:", payload);
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`,
+        {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      const text = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`Invalid JSON response: ${text}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit enquiry");
+      }
+
+      setIsSuccess(true);
+    } catch (error) {
+      console.error("Enquiry Error:", error);
+      alert(String(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+
+    setTimeout(() => {
+      setIsSuccess(false);
+      setName("");
+      setEmail("");
+      setPhone("");
+      setComments("");
+    }, 300);
+  };
+
   const cmsTitle =
     activeLang === "DE" ? eventData.cms_title_de : eventData.cms_title_en;
 
@@ -40,10 +122,10 @@ export default function Events() {
   const content =
     activeLang === "DE" ? eventData.content_de : eventData.content_en;
 
-  const buttonText1 =
+  const buttonText =
     activeLang === "DE" ? "Atmosphäre erleben" : "Experience the Vibe";
 
-  const buttonText2 = activeLang === "DE" ? "Auskunft" : "Enquiry";
+  const enquireNowText = activeLang === "DE" ? "Jetzt anfragen" : "Enquire Now";
 
   return (
     <section
@@ -67,14 +149,20 @@ export default function Events() {
             {content}
           </p>
 
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap items-center gap-4">
             <Button href="/events" className="border border-[#3E2723]">
-              {buttonText1}
+              {buttonText}
             </Button>
 
-            <Button href="/events" className="border border-[#3E2723]">
-              {buttonText2}
-            </Button>
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="relative inline-flex items-center justify-center px-6 py-4 text-[#3E2723] font-medium tracking-widest uppercase text-sm group transition-colors duration-300 hover:text-[#5D4037]"
+            >
+              <span className="relative z-10">{enquireNowText}</span>
+
+              <span className="absolute bottom-[10px] left-6 right-6 h-[1px] bg-[#5D4037] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left ease-[cubic-bezier(0.77,0,0.175,1)]"></span>
+            </button>
           </div>
         </div>
 
@@ -156,6 +244,113 @@ export default function Events() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={handleCloseModal}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-lg bg-[#FAF8F5] text-[#3E2723] shadow-2xl overflow-hidden z-10 border border-[#C5A880]/30 rounded-sm"
+            >
+              <button
+                onClick={handleCloseModal}
+                className="absolute top-4 right-4 z-30"
+              >
+                ✕
+              </button>
+
+              {!isSuccess ? (
+                <div className="p-8">
+                  <h3 className="text-2xl mb-6">
+                    {activeLang === "DE"
+                      ? "Veranstaltungsanfrage"
+                      : "Event Enquiry"}
+                  </h3>
+
+                  <form onSubmit={handleEnquirySubmit} className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      className="w-full border p-3"
+                    />
+
+                    <input
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full border p-3"
+                    />
+
+                    <input
+                      type="tel"
+                      placeholder="Phone"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      required
+                      className="w-full border p-3"
+                    />
+
+                    <textarea
+                      rows={4}
+                      placeholder="Comments"
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      className="w-full border p-3"
+                    />
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-3 bg-[#3E2723] text-white"
+                    >
+                      {isSubmitting
+                        ? "Sending..."
+                        : activeLang === "DE"
+                          ? "Senden"
+                          : "Send Enquiry"}
+                    </button>
+                  </form>
+                </div>
+              ) : (
+                <div className="p-8 text-center">
+                  <h3 className="text-2xl mb-4">
+                    {activeLang === "DE" ? "Vielen Dank!" : "Thank You!"}
+                  </h3>
+
+                  <p>
+                    {activeLang === "DE"
+                      ? "Ihre Anfrage wurde erfolgreich gesendet."
+                      : "Your enquiry has been submitted successfully."}
+                  </p>
+
+                  <button
+                    onClick={handleCloseModal}
+                    className="mt-6 w-full py-3 bg-[#3E2723] text-white"
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

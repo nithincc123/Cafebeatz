@@ -144,15 +144,62 @@ export default function GiftCards() {
     fetchVouchers();
   }, []);
 
-  const handlePurchaseSubmit = (e: React.FormEvent) => {
+  const handlePurchaseSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      const randomCode = `CB-VCH-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const payload = {
+      sender_name: senderName,
+      recipient_name: recipientName,
+      recipient_email: recipientEmail,
+      personal_message: personalMessage,
+      amount: selectedAmount,
+    };
+
+    try {
+      setIsSubmitting(true);
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/purchase-voucher`;
+
+      console.log("URL:", url);
+      console.log("Payload:", payload);
+
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`Invalid JSON response: ${text}`);
+      }
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit voucher enquiry");
+      }
+
+      // Generate voucher reference after successful submission
+      const randomCode = `CB-VCH-${Math.floor(
+        100000 + Math.random() * 900000,
+      )}`;
+
       setVoucherCode(randomCode);
-      setIsSubmitting(false);
       setIsSuccess(true);
-    }, 1500);
+    } catch (error) {
+      console.error("Voucher Enquiry Error:", error);
+      alert(String(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCloseModal = () => {

@@ -25,9 +25,7 @@ export default function EventCard({ ev, index, onRsvp }: EventCardProps) {
   const imageY = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
   const scheduleTitle =
-    activeLang === "DE"
-      ? "Veranstaltungsplan & Preise"
-      : "Event Schedule & Pricing";
+    activeLang === "DE" ? "Veranstaltungsplan" : "Event Schedule";
 
   const scheduleDate =
     activeLang === "DE" ? "Veranstaltungsdatum" : "Event Date";
@@ -37,11 +35,7 @@ export default function EventCard({ ev, index, onRsvp }: EventCardProps) {
   const scheduleVenue =
     activeLang === "DE" ? "Veranstaltungsort" : "Salon Venue";
 
-  const scheduleTicket =
-    activeLang === "DE" ? "Eintritt / Tickets" : "Admission / Tickets";
-
-  const reserveText =
-    activeLang === "DE" ? "Tickets reservieren" : "Reserve Tickets";
+  const enquiryText = activeLang === "DE" ? "Jetzt anfragen" : "Enquire Now";
 
   const inquireText =
     activeLang === "DE" ? "Catering anfragen" : "Inquire Catering";
@@ -149,10 +143,6 @@ export default function EventCard({ ev, index, onRsvp }: EventCardProps) {
               <span className="font-semibold pr-4">{scheduleVenue}</span>
               <span className="text-right">{ev.location}</span>
             </li>
-            <li className="flex justify-between border-b border-[#3E2723]/10 pb-1.5">
-              <span className="font-semibold pr-4">{scheduleTicket}</span>
-              <span className="text-right">{ev.price}</span>
-            </li>
           </ul>
         </div>
 
@@ -162,7 +152,7 @@ export default function EventCard({ ev, index, onRsvp }: EventCardProps) {
             onClick={() => onRsvp(ev)}
             className="border border-[#3E2723]"
           >
-            {reserveText}
+            {enquiryText}
           </Button>
 
           <a

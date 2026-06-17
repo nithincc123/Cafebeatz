@@ -18,6 +18,7 @@ export default function RsvpModal({
 }: RsvpModalProps) {
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
+  const [guestPhone, setGuestPhone] = useState("");
   const [guestCount, setGuestCount] = useState(2);
   const [specialRequests, setSpecialRequests] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,13 +50,58 @@ export default function RsvpModal({
     }
   }, [isSuccess]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    const payload = {
+      event_id: activeEvent.id,
+      name: guestName,
+      email: guestEmail,
+      phone: guestPhone,
+      comments: specialRequests,
+    };
+
+    try {
+      setIsSubmitting(true);
+
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`;
+
+      console.log("URL:", url);
+      console.log("Payload:", payload);
+
+      const response = await fetch(url, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const text = await response.text();
+
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`Invalid JSON response: ${text}`);
+      }
+
+      console.log("Response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit reservation");
+      }
+
       setIsSuccess(true);
-    }, 1200);
+    } catch (error) {
+      console.error("Reservation Error:", error);
+      alert(String(error));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
@@ -193,11 +239,15 @@ export default function RsvpModal({
                       >
                         <div className="text-center mb-4">
                           <span className="text-[9px] md:text-[10px] tracking-[0.3em] uppercase opacity-55 font-bold block text-[#C5A880]">
-                            reservation request
+                            event enquiry
                           </span>
                           <h4 className="text-xl md:text-2xl font-normal font-sans mt-0.5 text-[#3E2723]">
-                            Ticket Placement
+                            Host Your Event With Us
                           </h4>
+                          <p className="text-[13px] text-[#3E2723]/60 mt-1">
+                            Please fill out the details below and we will get
+                            back to you shortly.
+                          </p>
 
                           {/* Decorative Flourish */}
                           <div className="flex items-center justify-center gap-2.5 my-2 opacity-50">
@@ -237,73 +287,26 @@ export default function RsvpModal({
                             />
                           </div>
 
-                          {/* Custom Styled Dropdown for Guest Count */}
-                          <div ref={dropdownRef} className="relative">
+                          <div>
                             <label className="block text-[9.5px] md:text-[10.5px] uppercase tracking-[0.2em] font-bold mb-1.5 text-[#3E2723]">
-                              Guest Count
+                              Phone Number
                             </label>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                setIsGuestDropdownOpen(!isGuestDropdownOpen)
-                              }
-                              className="w-full bg-white border border-[#3E2723]/20 px-3.5 py-2.5 text-left text-xs md:text-sm font-semibold flex items-center justify-between hover:border-[#3E2723]/45 transition-colors cursor-pointer text-[#3E2723] rounded-none"
-                            >
-                              <span>
-                                {guestCount}{" "}
-                                {guestCount === 1 ? "Guest" : "Guests"}
-                              </span>
-                              <svg
-                                className={`w-4 h-4 text-[#3E2723]/60 transition-transform duration-200 ${
-                                  isGuestDropdownOpen ? "rotate-180" : ""
-                                }`}
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="1.8"
-                                  d="M19 9l-7 7-7-7"
-                                />
-                              </svg>
-                            </button>
-
-                            <AnimatePresence>
-                              {isGuestDropdownOpen && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: -5 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -5 }}
-                                  transition={{ duration: 0.15 }}
-                                  className="absolute left-0 right-0 mt-1 z-30 bg-white border border-[#3E2723]/20 shadow-xl max-h-48 overflow-y-auto rounded-none"
-                                >
-                                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                                    <button
-                                      key={num}
-                                      type="button"
-                                      onClick={() => {
-                                        setGuestCount(num);
-                                        setIsGuestDropdownOpen(false);
-                                      }}
-                                      className={`w-full text-left px-4 py-2.5 text-xs md:text-sm transition-colors hover:bg-[#F4F1EA] cursor-pointer text-[#3E2723] ${
-                                        guestCount === num
-                                          ? "bg-[#C5A880]/15 font-bold"
-                                          : ""
-                                      }`}
-                                    >
-                                      {num} {num === 1 ? "Guest" : "Guests"}
-                                    </button>
-                                  ))}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
+                            <input
+                              type="tel"
+                              required
+                              value={guestPhone}
+                              onChange={(e) => setGuestPhone(e.target.value)}
+                              placeholder="e.g., +49 30 20919366"
+                              className="w-full bg-white border border-[#3E2723]/20 px-3.5 py-2.5 focus:outline-none focus:border-[#3E2723] focus:ring-0 transition-all duration-300 placeholder:text-stone-300 tracking-wide rounded-none hover:border-[#3E2723]/45 text-[#3E2723] text-xs md:text-sm"
+                            />
                           </div>
 
                           <div>
                             <label className="block text-[9.5px] md:text-[10.5px] uppercase tracking-[0.2em] font-bold mb-1.5 text-[#3E2723]">
-                              Special Requests / Dietary
+                              Comments / Details{" "}
+                              <span className="font-normal text-[#3E2723]/40 tracking-normal">
+                                — optional
+                              </span>
                             </label>
                             <textarea
                               rows={2}
@@ -311,7 +314,7 @@ export default function RsvpModal({
                               onChange={(e) =>
                                 setSpecialRequests(e.target.value)
                               }
-                              placeholder="e.g., Vegetarian menu, fireplace table requests, wheelchair access..."
+                              placeholder="Tell us about your event..."
                               className="w-full bg-white border border-[#3E2723]/20 px-3.5 py-2.5 focus:outline-none focus:border-[#3E2723] focus:ring-0 transition-all duration-300 placeholder:text-stone-300 resize-none font-sans leading-relaxed rounded-none hover:border-[#3E2723]/45 text-[#3E2723] text-xs md:text-sm"
                             />
                           </div>
@@ -319,16 +322,6 @@ export default function RsvpModal({
 
                         {/* CTA Footer: Estimate combined next to Submit button */}
                         <div className="mt-8 pt-5 border-t border-[#3E2723]/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full">
-                          {/* Dynamic calculated total estimation */}
-                          <div className="flex flex-col text-left">
-                            <span className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] font-bold text-[#3E2723]/60">
-                              Estimated Total
-                            </span>
-                            <span className="text-lg md:text-xl font-serif font-bold text-[#3E2723] mt-0.5">
-                              {formattedTotal}
-                            </span>
-                          </div>
-
                           {/* Submit controls */}
                           <div className="flex items-center gap-2.5 w-full sm:w-auto">
                             <button
@@ -343,9 +336,7 @@ export default function RsvpModal({
                               disabled={isSubmitting}
                               className="flex-1 sm:flex-none px-5 py-2.5 bg-[#3E2723] text-[#FAF8F5] text-[9.5px] font-bold uppercase tracking-widest hover:bg-[#5D4037] transition-all disabled:opacity-50 cursor-pointer rounded-none shadow-sm text-center whitespace-nowrap"
                             >
-                              {isSubmitting
-                                ? "Sending..."
-                                : "Submit Reservation"}
+                              {isSubmitting ? "Sending..." : "Send Enquiry"}
                             </button>
                           </div>
                         </div>

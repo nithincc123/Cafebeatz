@@ -12,8 +12,33 @@ export default function Locations() {
   const sectionTitle =
     activeLang === "DE" ? "Standorte & Öffnungszeiten" : "Locations & Hours";
 
-  const operatingHoursTitle =
-    activeLang === "DE" ? "Öffnungszeiten" : "Operating Hours";
+  const openingHoursTitle =
+    activeLang === "DE" ? "Öffnungszeiten" : "Opening Hours";
+
+  const openingHoursContent =
+    activeLang === "DE"
+      ? `
+Kaffee & Kuchen: 09:00 – 18:00 Uhr
+
+Küchenzeiten (Warme Speisen):
+Mo – Fr: 09:00 – 15:00 Uhr
+Wochenenden & Feiertage: 09:00 – 16:00 Uhr
+
+Dienstag: Geschlossen
+
+*Derzeit täglich geöffnet. Geplant ist künftig ein Ruhetag pro Woche (voraussichtlich Dienstag). Änderungen können später vorgenommen werden.
+`
+      : `
+Coffee & Cake: 9:00 AM – 6:00 PM
+
+Kitchen Time (Hot Food):
+Mon – Fri: 9:00 AM – 3:00 PM
+Weekends & Public Holidays: 9:00 AM – 4:00 PM
+
+Tuesday: Closed
+
+*Currently open every day. We are planning to introduce one closing day per week (likely Tuesday). This can be updated later if the day changes.
+`;
 
   const bookTable = activeLang === "DE" ? "Tischreservierung" : "Book a Table";
 
@@ -25,50 +50,84 @@ export default function Locations() {
       name:
         activeLang === "DE" ? "Das Große Kaffeehaus" : "The Grand Coffeehouse",
 
-      address: "Schiffbauerdamm 10, 10117 Berlin",
-      phone: "030 / 810 10 858",
-      email: "hello@cafebeatz.com",
+      address: "Neue Kantstraße 32, 14057 Berlin",
+      phone: "030 20919366",
+      email: "mail@cafebeatz.de",
       image: "/assets/clint-images/Location 1 option 1.png",
       menuLink: "#menu",
       reservationLink: "/reservation",
 
       hours: [
         {
-          label: activeLang === "DE" ? "Öffnungszeiten" : "Opening Hours",
-          time: "9:00 am - 6:00 pm",
+          label: activeLang === "DE" ? "Kaffee & Kuchen" : "Coffee & Cake",
+          time: "09:00 - 18:00",
         },
         {
-          label: activeLang === "DE" ? "Küchenzeiten" : "Kitchen Hours",
-          time: "9:00 am - 6:00 pm",
+          label:
+            activeLang === "DE"
+              ? "Küchenzeiten (Mo - Fr)"
+              : "Kitchen Time (Mon - Fri)",
+          time: "09:00 - 15:00",
+        },
+        {
+          label:
+            activeLang === "DE"
+              ? "Wochenende & Feiertage"
+              : "Weekend & Public Holidays",
+          time: "09:00 - 16:00",
+        },
+        {
+          label:
+            activeLang === "DE"
+              ? "Ruhetag (voraussichtlich)"
+              : "Closed Day (planned)",
+          time: activeLang === "DE" ? "Dienstag" : "Tuesday",
         },
       ],
     },
 
-    {
-      id: "evening-theme",
+    // {
+    //   id: "evening-theme",
 
-      name: activeLang === "DE" ? "Abendstimmung" : "Evening Theme",
+    //   name: activeLang === "DE" ? "Abendstimmung" : "Evening Theme",
 
-      description:
-        activeLang === "DE"
-          ? "Die Atmosphäre im Café Beatz verändert sich mit dem Licht, den Jahreszeiten und der Tageszeit – und bietet vom Morgenkaffee bis zu den Abendgesprächen ein besonderes Erlebnis."
-          : "The atmosphere at Café Beatz changes with the light, the seasons, and the time of day — offering a different experience from morning coffee to evening conversations.",
+    //   description:
+    //     activeLang === "DE"
+    //       ? "Die Atmosphäre im Café Beatz verändert sich mit dem Licht, den Jahreszeiten und der Tageszeit – und bietet vom Morgenkaffee bis zu den Abendgesprächen ein besonderes Erlebnis."
+    //       : "The atmosphere at Café Beatz changes with the light, the seasons, and the time of day — offering a different experience from morning coffee to evening conversations.",
 
-      image: "/assets/clint-images/evening-image.jpeg",
-      menuLink: "#menu-evening",
-      reservationLink: "/reservation",
+    //   image: "/assets/clint-images/evening-image.jpeg",
+    //   menuLink: "#menu-evening",
+    //   reservationLink: "/reservation",
 
-      hours: [
-        {
-          label: activeLang === "DE" ? "Betriebszeiten" : "Operating Hours",
-          time: activeLang === "DE" ? "Demnächst verfügbar" : "Stay Tuned",
-        },
-        {
-          label: activeLang === "DE" ? "Küchenzeiten" : "Kitchen Hours",
-          time: activeLang === "DE" ? "Demnächst verfügbar" : "Stay Tuned",
-        },
-      ],
-    },
+    //   hours: [
+    //     {
+    //       label: activeLang === "DE" ? "Kaffee & Kuchen" : "Coffee & Cake",
+    //       time: "09:00 - 18:00",
+    //     },
+    //     {
+    //       label:
+    //         activeLang === "DE"
+    //           ? "Küchenzeiten (Mo - Fr)"
+    //           : "Kitchen Time (Mon - Fri)",
+    //       time: "09:00 - 15:00",
+    //     },
+    //     {
+    //       label:
+    //         activeLang === "DE"
+    //           ? "Wochenende & Feiertage"
+    //           : "Weekend & Public Holidays",
+    //       time: "09:00 - 16:00",
+    //     },
+    //     {
+    //       label:
+    //         activeLang === "DE"
+    //           ? "Ruhetag (voraussichtlich)"
+    //           : "Closed Day (planned)",
+    //       time: activeLang === "DE" ? "Dienstag" : "Tuesday",
+    //     },
+    //   ],
+    // },
   ];
 
   function LocationCard({ location, index }: { location: any; index: number }) {
@@ -158,9 +217,10 @@ export default function Locations() {
           <div className="mb-10 w-full max-w-md">
             <div className="border-b border-[#3E2723]/20 pb-4 mb-4">
               <h4 className="uppercase tracking-widest text-sm font-bold text-[#5D4037]">
-                {operatingHoursTitle}
+                {openingHoursTitle}
               </h4>
             </div>
+
             <ul className="space-y-3 text-sm md:text-base opacity-90">
               {location.hours.map((hourObj: any, i: number) => (
                 <li
@@ -172,6 +232,12 @@ export default function Locations() {
                 </li>
               ))}
             </ul>
+
+            <div className="mt-4 text-xs md:text-sm italic text-[#5D4037]/70 leading-relaxed">
+              {activeLang === "DE"
+                ? "Derzeit täglich geöffnet. Geplant ist künftig ein Ruhetag pro Woche (voraussichtlich Dienstag). Änderungen können später vorgenommen werden."
+                : "Currently open every day. We are planning to introduce one closing day per week (likely Tuesday). This can be updated later if the day changes."}
+            </div>
           </div>
 
           {/* UX Hierarchy: Secondary & Tertiary Buttons */}
