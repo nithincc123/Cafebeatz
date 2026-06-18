@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "http://www.techsoftwebsolutions.com/techsoft/demo/cafe-beatz-back/public/api/:path*"
+    }
+  ]
+}
