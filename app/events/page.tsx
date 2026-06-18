@@ -54,8 +54,8 @@ export default function EventsPage() {
     const fetchData = async () => {
       try {
         const [eventsRes, bannerRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/events`),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/event-banner`),
+          fetch(`/api/events`),
+          fetch(`/api/event-banner`),
         ]);
 
         const eventsData = await eventsRes.json();

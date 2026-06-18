@@ -64,7 +64,7 @@ export default function RsvpModal({
     try {
       setIsSubmitting(true);
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`;
+      const url = `/api/event-enquiry`;
 
       console.log("URL:", url);
       console.log("Payload:", payload);

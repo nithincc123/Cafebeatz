@@ -61,23 +61,20 @@ export default function Events() {
     try {
       setIsSubmitting(true);
 
-      const url = `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`;
+      const url = `/api/event-enquiry`;
 
       console.log("URL:", url);
       console.log("Payload:", payload);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/event-enquiry`,
-        {
-          method: "POST",
-          mode: "cors",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(payload),
+      const response = await fetch(`/api/event-enquiry`, {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-      );
+        body: JSON.stringify(payload),
+      });
 
       const text = await response.text();
 
