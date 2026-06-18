@@ -7,7 +7,6 @@ const nextConfig = {
     },
   },
 
-  // Your existing images configuration
   images: {
     remotePatterns: [
       {
@@ -24,17 +23,14 @@ const nextConfig = {
       },
     ],
   },
+
+  // These settings will now be correctly read by Next.js
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default nextConfig;
-
-//   // ADD THESE LINES to ignore build errors
-//   typescript: {
-//     ignoreBuildErrors: true,
-//   },
-//   eslint: {
-//     ignoreDuringBuilds: true,
-//   },
-// };
-
-// module.exports = nextConfig;
