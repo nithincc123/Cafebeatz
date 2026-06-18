@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
+
   // Your existing images configuration
   images: {
     remotePatterns: [
@@ -17,14 +24,17 @@ const nextConfig = {
       },
     ],
   },
-
-  // ADD THESE LINES to ignore build errors
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
+
+//   // ADD THESE LINES to ignore build errors
+//   typescript: {
+//     ignoreBuildErrors: true,
+//   },
+//   eslint: {
+//     ignoreDuringBuilds: true,
+//   },
+// };
+
+// module.exports = nextConfig;
