@@ -122,9 +122,7 @@ export default function GiftCards() {
   useEffect(() => {
     const fetchVouchers = async () => {
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/gift-vouchers`,
-        );
+        const response = await fetch(`/api/gift-vouchers`);
 
         const result = await response.json();
 
