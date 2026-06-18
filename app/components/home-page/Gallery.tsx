@@ -12,7 +12,7 @@ export default function Gallery() {
   const [activeImage, setActiveImage] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/galleries`)
+    fetch(`/api/galleries`)
       .then((res) => res.json())
       .then((data) => {
         setGalleryImages(data.data);
