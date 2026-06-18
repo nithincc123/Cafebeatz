@@ -18,7 +18,7 @@ export default function FoodAndAbout() {
   const flyUpSlow = useTransform(scrollY, [0, 2000], [300, -300]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/home-welcome`)
+    fetch(`/api/home-welcome`)
       .then((res) => res.json())
       .then((data) => {
         setWelcome(data.data);
