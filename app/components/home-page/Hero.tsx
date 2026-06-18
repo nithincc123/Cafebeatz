@@ -17,7 +17,14 @@ export default function Hero() {
 
     window.addEventListener("scroll", handleScroll);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/home-banner`)
+    // fetch(`${process.env.NEXT_PUBLIC_API_URL}/home-banner`)
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setBanner(data.data);
+    //   })
+    //   .catch((err) => console.error("Banner API Error:", err));
+
+    fetch(`/api/home-banner`)
       .then((res) => res.json())
       .then((data) => {
         setBanner(data.data);
