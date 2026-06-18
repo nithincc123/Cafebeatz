@@ -34,7 +34,7 @@ export default function Events() {
   const y3 = useTransform(scrollY, [0, 3000], [30, -30]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/home-event`)
+    fetch(`/api/home-event`)
       .then((res) => res.json())
       .then((data) => {
         setEventData(data.data);
