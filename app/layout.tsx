@@ -4,6 +4,7 @@ import "./globals.css";
 import SiteChrome from "./components/SiteChrome";
 import { LanguageProvider } from "./context/LanguageContext";
 
+// Define fonts outside the component to prevent re-instantiation
 const jost = Jost({
   subsets: ["latin"],
   variable: "--font-jost",
@@ -22,14 +23,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${jost.variable} ${alexBrush.variable} font-sans antialiased`}
-      >
+    <html lang="en" className={`${jost.variable} ${alexBrush.variable}`}>
+      <body className="font-sans antialiased">
         <LanguageProvider>
           <SiteChrome>{children}</SiteChrome>
         </LanguageProvider>
